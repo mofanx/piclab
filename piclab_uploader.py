@@ -105,8 +105,8 @@ def run_on_hotkey():
             PiclabUploader.main()
         except Exception as e:
             print(f"快捷键上传失败: {e}")
-    keyboard.add_hotkey('f8+t', handler)
-    print('已绑定快捷键 F8+T，按下即可上传剪贴板图片或图片链接...')
+    keyboard.add_hotkey('f8+p', handler)
+    print('已绑定快捷键 F8+P，按下即可上传剪贴板图片或图片链接...')
     keyboard.wait()
 
 if __name__ == '__main__':
