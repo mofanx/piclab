@@ -83,6 +83,10 @@ class PiclabUploader:
         parser.add_argument('--api-key', default=os.getenv('PICLAB_API_KEY', 'your_api_key1'), help='API密钥')
         args = parser.parse_args()
 
+        # 调试输出
+        # print(f"[调试] 当前API上传地址: {args.api_url}")
+        # print(f"[调试] 当前API密钥: {args.api_key}")
+        
         uploader = cls(args.api_url, args.api_key)
         try:
             if args.image:
