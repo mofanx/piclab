@@ -76,10 +76,24 @@ curl -H "Authorization: Bearer your_api_key1" -F "file=@本地图片路径.jpg" 
   ```bash
   python piclab_uploader.py
   ```
-- 绑定快捷键（F8+T），按下后自动上传剪贴板图片或链接：
+- 绑定快捷键（F8+P），按下后自动上传剪贴板图片或链接：
   ```bash
   python piclab_uploader.py
-  # 按 F8+T 即可自动上传
+  # 按 F8+P 即可自动上传
+  ```
+
+### 方式三：截图并上传（screenshot_piclab_uploader.py）
+
+- 依赖安装：
+  ```bash
+  mamba install pyclip keyboard requests pyautogui
+  # Linux 桌面还需安装截图工具，如 flameshot、scrot、gnome-screenshot 等
+  ```
+- 运行脚本后，按 F8+O 自动截图并上传，Markdown 链接自动复制到剪贴板。
+  ```bash
+  python screenshot_piclab_uploader.py
+  # 按 F8+O 区域截图并上传
+  # 按 Esc 退出监听
   ```
 
 返回示例：
@@ -98,4 +112,13 @@ curl -H "Authorization: Bearer your_api_key1" -F "file=@本地图片路径.jpg" 
 - dotenv
 
 ---
+
+## API Key 批量生成脚本
+
+可用 `gen_api_keys.py` 快速生成高强度 API Key，直接复制到 .env 文件：
+```bash
+python gen_api_keys.py 3
+# 输出示例：API_KEYS=key1,key2,key3
+```
+
 如需扩展支持云存储、图片压缩等，可在此基础上修改。
