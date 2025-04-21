@@ -1,0 +1,15 @@
+{
+  "name": "piclab",
+  "version": "1.0.0",
+  "description": "简单的无界面图床API服务",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "slugify": "^1.6.6"
+  }
+}
