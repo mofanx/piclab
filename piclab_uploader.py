@@ -4,8 +4,34 @@ import requests
 import tempfile
 import pyclip
 import keyboard
+import platform
+import subprocess
 from urllib.parse import urlparse
 from datetime import datetime
+
+def send_system_notification(title, message):    
+    """    
+    跨平台桌面通知，优先支持Linux，自动处理root和非root用户。    
+    """    
+    system = platform.system()    
+    if system == "Linux":        
+        try:            
+            if hasattr(os, "geteuid") and os.geteuid() == 0:                
+                current_user = os.environ.get('SUDO_USER')                
+                if current_user:                    
+                    user_home = f"/home/{current_user}"                    
+                    display = os.environ.get('DISPLAY', ':0')                    
+                    xauthority = os.environ.get('XAUTHORITY', f"{user_home}/.Xauthority")                    
+                    cmd = f"DISPLAY={display} XAUTHORITY={xauthority} notify-send '{title}' '{message}'"                    
+                    subprocess.run(['su', current_user, '-c', cmd], check=True)                
+                else:                    
+                    print("[通知] 无法确定实际用户，通知可能无法显示")            
+            else:                
+                subprocess.run(['notify-send', title, message], check=True)        
+        except Exception as e:            
+            print(f"[通知] 发送系统通知失败: {e}")    
+    else:        
+        print(f"[通知] {title}: {message}")
 
 class PiclabUploader:
     def __init__(self, api_url, api_key):
@@ -36,11 +62,14 @@ class PiclabUploader:
             if markdown:
                 pyclip.copy(markdown)
                 print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
+                send_system_notification("上传成功", "Markdown链接已复制到剪贴板")
             else:
                 print("上传成功，但未返回Markdown链接。响应：", data)
+                send_system_notification("上传成功", "但未返回Markdown链接")
         except Exception as e:
             print(f"上传失败: {e}")
             print("服务器返回:", getattr(resp, 'text', '无响应内容'))
+            send_system_notification("上传失败", str(e))
         finally:
             if remove_after and os.path.exists(file_path):
                 os.remove(file_path)
@@ -96,6 +125,7 @@ class PiclabUploader:
                 uploader.upload_image(image_path_or_url)
         except Exception as e:
             print(f"上传失败: {e}")
+            send_system_notification("上传失败", str(e))
 
 # 快捷键绑定功能
 
@@ -105,6 +135,7 @@ def run_on_hotkey():
             PiclabUploader.main()
         except Exception as e:
             print(f"快捷键上传失败: {e}")
+            send_system_notification("快捷键上传失败", str(e))
     keyboard.add_hotkey('f8+p', handler)
     print('已绑定快捷键 F8+P，按下即可上传剪贴板图片或图片链接...')
     keyboard.wait()
