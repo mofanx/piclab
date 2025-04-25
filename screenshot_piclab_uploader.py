@@ -292,7 +292,7 @@ class PiclabUploader:
             markdown = data.get('markdown', '')
             if markdown:
                 pyclip.copy(markdown)
-                print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
+                # print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
                 return markdown
             else:
                 print("上传成功，但未返回Markdown链接。响应：", data)
