@@ -293,8 +293,10 @@ class PiclabUploader:
             if markdown:
                 pyclip.copy(markdown)
                 print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
+                return markdown
             else:
                 print("上传成功，但未返回Markdown链接。响应：", data)
+                return None
         except Exception as e:
             print(f"上传失败: {e}")
             print("服务器返回:", getattr(resp, 'text', '无响应内容'))
@@ -394,11 +396,19 @@ def screenshot_and_upload_piclab():
     api_key = os.getenv('PICLAB_API_KEY', 'your_api_key1')
     uploader = PiclabUploader(api_url, api_key)
     try:
-        uploader.upload_image(screenshot_path)
-        send_system_notification("截图上传成功", "Markdown链接已复制到剪贴板")
+        markdown = uploader.upload_image(screenshot_path)
+        if markdown:
+            print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
+            send_system_notification("截图上传成功", "Markdown链接已复制到剪贴板")
+            return markdown
+        else:
+            print("上传成功，但未返回Markdown链接。响应：", data)
+            send_system_notification("截图上传成功", "但未返回Markdown链接")
+            return None
     except Exception as e:
         print(f"截图上传失败: {e}")
         send_system_notification("截图上传失败", str(e))
+        return None
     finally:
         if os.path.exists(screenshot_path):
             try:

@@ -63,9 +63,11 @@ class PiclabUploader:
                 pyclip.copy(markdown)
                 print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
                 send_system_notification("上传成功", "Markdown链接已复制到剪贴板")
+                return markdown
             else:
                 print("上传成功，但未返回Markdown链接。响应：", data)
                 send_system_notification("上传成功", "但未返回Markdown链接")
+                return None
         except Exception as e:
             print(f"上传失败: {e}")
             print("服务器返回:", getattr(resp, 'text', '无响应内容'))
@@ -119,10 +121,11 @@ class PiclabUploader:
         uploader = cls(args.api_url, args.api_key)
         try:
             if args.image:
-                uploader.upload_image(args.image)
+                markdown = uploader.upload_image(args.image)
             else:
                 image_path_or_url = cls.get_clipboard_image_or_url()
-                uploader.upload_image(image_path_or_url)
+                markdown = uploader.upload_image(image_path_or_url)
+            return markdown
         except Exception as e:
             print(f"上传失败: {e}")
             send_system_notification("上传失败", str(e))
@@ -143,6 +146,9 @@ def run_on_hotkey():
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1 and not (len(sys.argv) == 2 and sys.argv[1].startswith('-')):
-        PiclabUploader.main()
+        markdown = PiclabUploader.main()
+        if markdown:
+            print(f"上传成功，Markdown链接已复制到剪贴板：\n{markdown}")
+            send_system_notification("上传成功", "Markdown链接已复制到剪贴板")
     else:
         run_on_hotkey()
