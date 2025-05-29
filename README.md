@@ -6,6 +6,8 @@
 - 文件名自动转码、加时间戳，避免重复
 - 返回 Markdown 图片链接，域名可配置
 - 支持中文文件名
+- 健康检查端点 `/health`
+- 完善的错误处理和日志记录
 
 ## 快速开始
 
@@ -81,6 +83,40 @@ curl -H "Authorization: Bearer your_api_key1" -F "file=@本地图片路径.jpg" 
   python piclab_uploader.py
   # 按 F8+P 即可自动上传
   ```
+
+## 健康检查
+
+服务提供了健康检查端点，可用于监控服务状态：
+
+```bash
+curl http://localhost:3000/health
+```
+
+正常返回：
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-05-29T08:45:30.123Z"
+}
+```
+
+## 错误处理
+
+API 遵循 RESTful 规范，返回标准化的错误响应：
+
+- 400 Bad Request: 无效的请求参数
+- 401 Unauthorized: 未提供有效的 API Key
+- 403 Forbidden: API Key 无效
+- 413 Payload Too Large: 上传文件超过大小限制 (10MB)
+- 500 Internal Server Error: 服务器内部错误
+
+示例错误响应：
+```json
+{
+  "success": false,
+  "error": "错误描述"
+}
+```
 
 ### 方式三：截图并上传（screenshot_piclab_uploader.py）
 
