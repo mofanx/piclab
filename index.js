@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const slugify = require('slugify');
+const crypto = require('crypto');
 const cors = require('cors');
 
 const app = express();
@@ -39,13 +40,15 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const now = new Date();
-    const timestamp = now.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
+    // 时间戳格式: YYYYMMDDHHMMSSmmm (年年年年月月日日时时分分秒秒毫秒毫秒毫秒)
+    const timestamp = now.toISOString().replace(/[-T:.Z]/g, ''); // 完整 ISO 字符串，包含毫秒
+    const randomSuffix = crypto.randomBytes(4).toString('hex'); // 生成 8 个字符的随机十六进制字符串
     const ext = path.extname(file.originalname);
     let base = path.basename(file.originalname, ext);
     // slugify 中文文件名
     base = slugify(base, { lower: true, strict: true, locale: 'zh' });
-    if (!base) base = 'image';
-    cb(null, `${base}_${timestamp}${ext}`);
+    if (!base) base = 'image'; // 如果基础名为空，则默认为 'image'
+    cb(null, `${base}_${randomSuffix}_${timestamp}${ext}`); // 新文件名格式: slugified文件名_随机字符串_YYYYMMDDHHMMSSmmm.扩展名
   }
 });
 
