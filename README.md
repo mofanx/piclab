@@ -54,11 +54,32 @@ pnpm start
 
 4. 上传图片
 
-### 方式一：curl 命令行
+### 方式一：HTTP 上传接口
+
+#### 1）form-data 上传文件
 
 ```bash
 curl -H "Authorization: Bearer your_api_key1" -F "file=@本地图片路径.jpg" http://localhost:3000/api/upload
 ```
+
+#### 2）JSON 传 base64 字符串
+
+```bash
+curl -H "Authorization: Bearer your_api_key1" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "base64": "data:image/png;base64,iVBORw0...",
+           "filename": "demo.png",
+           "mimeType": "image/png"
+         }' \
+     http://localhost:3000/api/upload
+```
+
+字段说明：
+
+- `base64` / `fileBase64` / `data`：三选一，传入 base64 字符串或 data URL，必填
+- `filename` / `name` / `fileName`：可选，默认自动生成
+- `mimeType` / `mimetype` / `contentType` / `type`：可选，默认从 data URL 或文件内容推断
 
 ### 方式二：Python 脚本（piclab_uploader.py）
 
@@ -143,9 +164,10 @@ API 遵循 RESTful 规范，返回标准化的错误响应：
 ## 依赖说明
 - Node.js
 - express
-- multer
+- multer 2.x
 - slugify
 - dotenv
+- mime-types
 
 ---
 
